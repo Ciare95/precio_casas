@@ -1,6 +1,6 @@
 import mysql.connector
 
-def get_db_connection():
+def obtener_conexion():
     """Establece una conexión con la base de datos."""
     try:
         mydb = mysql.connector.connect(

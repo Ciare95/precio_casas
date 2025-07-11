@@ -1,7 +1,7 @@
 import pandas as pd
-from database import get_db_connection
+from database import obtener_conexion
 
-def check_if_record_exists(cursor, values):
+def verificar_registros(cursor, values):
     """Verifica si un registro ya existe en la base de datos."""
     sql = "SELECT COUNT(*) FROM casas WHERE precio = %s AND area = %s AND habitaciones = %s AND antiguedad = %s AND fecha_publicacion = %s AND descripcion = %s"
     # Adaptar los valores para la consulta de verificación
@@ -9,9 +9,9 @@ def check_if_record_exists(cursor, values):
     cursor.execute(sql, check_values)
     return cursor.fetchone()[0] > 0
 
-def import_data_from_csv(filepath):
+def importar_csv(filepath):
     """Lee un archivo CSV e importa los datos a la base de datos."""
-    mydb = get_db_connection()
+    mydb = obtener_conexion()
     if not mydb:
         return
 
@@ -46,7 +46,7 @@ def import_data_from_csv(filepath):
             
             valores = (precio, area, habitaciones, antiguedad, fecha_mysql, descripcion, tipo_casa)
 
-            if not check_if_record_exists(cursor, valores):
+            if not verificar_registros(cursor, valores):
                 sql = "INSERT INTO casas (precio, area, habitaciones, antiguedad, fecha_publicacion, descripcion, tipo_casa) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, valores)
                 print(f"Insertando nuevo registro: {valores}")

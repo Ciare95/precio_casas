@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Predicción de Valor por Metro Cuadrado{% endblock %}
+
+{% block content %}
+<h1>Predicción de Valor por Metro Cuadrado</h1>
+<p>Ingresa el precio total de una vivienda para predecir su valor por metro cuadrado</p>
+
+<div class="card">
+    <h2>Calculadora de Valor por m²</h2>
+    <form id="prediccionForm">
+        <div class="input-group">
+            <label for="precio">Precio total de la vivienda ($):</label>
+            <input type="number" id="precio" step="1000" min="1000" placeholder="Ej: 250000000" required>
+        </div>
+        <button type="submit" class="btn">Calcular Valor por m²</button>
+    </form>
+    
+    <div id="resultado" style="margin-top: 20px; display: none;">
+        <h3>Resultado:</h3>
+        <div id="contenido-resultado"></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Ejemplos de Uso</h2>
+    <p>Prueba con estos precios de ejemplo:</p>
+    <button onclick="calcularEjemplo(150000000)" class="btn">$150,000,000</button>
+    <button onclick="calcularEjemplo(250000000)" class="btn">$250,000,000</button>
+    <button onclick="calcularEjemplo(350000000)" class="btn">$350,000,000</button>
+</div>
+
+<div class="card">
+    <h2>Información del Modelo</h2>
+    <p><strong>¿Qué hace esta calculadora?</strong></p>
+    <ul>
+        <li>Predice el valor por metro cuadrado basándose en el precio total</li>
+        <li>Ayuda a evaluar si una propiedad tiene un valor por m² competitivo</li>
+        <li>Útil para comparar eficiencia de precios entre propiedades</li>
+    </ul>
+</div>
+
+<script>
+document.getElementById('prediccionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const precio = document.getElementById('precio').value;
+    if (precio) {
+        calcularValorM2(precio);
+    }
+});
+
+function calcularEjemplo(precio) {
+    document.getElementById('precio').value = precio;
+    calcularValorM2(precio);
+}
+
+function calcularValorM2(precio) {
+    fetch(`/calcular_precio/${precio}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('contenido-resultado').innerHTML = html;
+            document.getElementById('resultado').style.display = 'block';
+        })
+        .catch(error => {
+            document.getElementById('contenido-resultado').innerHTML = '<p style="color: red;">Error al calcular el valor por m²</p>';
+            document.getElementById('resultado').style.display = 'block';
+        });
+}
+
+// Formato de números con separadores de miles
+document.getElementById('precio').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value) {
+        e.target.value = value;
+    }
+});
+</script>
+
+<style>
+.card {
+    background-color: #f8f9fa;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+#resultado {
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #28a745;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

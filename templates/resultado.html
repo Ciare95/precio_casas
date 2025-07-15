@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado de Predicción{% endblock %}
+
+{% block content %}
+<div class="resultado-container">
+    <h1>Resultado de la Predicción</h1>
+    
+    <div class="resultado-card">
+        <h2>Valor por Metro Cuadrado Predicho</h2>
+        
+        <div class="resultado-principal">
+            <p><strong>Precio ingresado:</strong> ${{ "{:,.0f}".format(resultado.precio) }}</p>
+            <p><strong>Valor por m² predicho:</strong> 
+                <span class="valor-destacado">${{ "{:,.2f}".format(resultado.valor_m2_predicho) }}</span>
+            </p>
+        </div>
+        
+        <div class="modelo-info">
+            <h3>Información del Modelo</h3>
+            <p><strong>Ecuación utilizada:</strong></p>
+            <div class="ecuacion">
+                Valor_por_m² = {{ "{:.2f}".format(resultado.intercepto) }} + {{ "{:.6f}".format(resultado.pendiente) }} × Precio_Total
+            </div>
+            
+            <div class="explicacion">
+                <p><strong>Interpretación:</strong></p>
+                <ul>
+                    <li><strong>Intercepto:</strong> ${{ "{:.2f}".format(resultado.intercepto) }} - Valor base por m²</li>
+                    <li><strong>Pendiente:</strong> {{ "{:.6f}".format(resultado.pendiente) }} - Por cada peso adicional en el precio total, el valor por m² aumenta ${{ "{:.6f}".format(resultado.pendiente) }}</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="acciones">
+            <a href="{{ url_for('vivienda.prediccion') }}" class="btn btn-primary">Nueva Predicción</a>
+            <a href="{{ url_for('vivienda.home') }}" class="btn btn-secondary">Ver Análisis Completo</a>
+        </div>
+    </div>
+    
+    <div class="contexto-card">
+        <h3>¿Qué significa este resultado?</h3>
+        <p>El valor por metro cuadrado predicho te ayuda a:</p>
+        <ul>
+            <li>Evaluar si una propiedad tiene un precio competitivo por m²</li>
+            <li>Comparar eficiencia de precios entre diferentes propiedades</li>
+            <li>Identificar propiedades con mejor relación precio-espacio</li>
+        </ul>
+        
+        <div class="recomendaciones">
+            <h4>Recomendaciones:</h4>
+            {% if resultado.valor_m2_predicho > 3000000 %}
+                <p class="recomendacion alto">⚠️ <strong>Valor alto por m²:</strong> Esta propiedad podría estar en zona premium o tener características especiales.</p>
+            {% elif resultado.valor_m2_predicho > 2000000 %}
+                <p class="recomendacion medio">📊 <strong>Valor medio por m²:</strong> Precio dentro del rango típico del mercado.</p>
+            {% else %}
+                <p class="recomendacion bajo">💰 <strong>Valor económico por m²:</strong> Podría ser una buena oportunidad de inversión.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.resultado-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.resultado-card, .contexto-card {
+    background-color: #f8f9fa;
+    padding: 25px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.resultado-principal {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid #28a745;
+}
+
+.valor-destacado {
+    color: #28a745;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.modelo-info {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+}
+
+.ecuacion {
+    background-color: #f1f3f4;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.explicacion ul {
+    padding-left: 20px;
+}
+
+.explicacion li {
+    margin-bottom: 8px;
+}
+
+.acciones {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.recomendaciones {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.recomendacion {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.recomendacion.alto {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.recomendacion.medio {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.recomendacion.bajo {
+    background-color: #d1ecf1;
+    border-left: 4px solid #17a2b8;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+h4 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}
